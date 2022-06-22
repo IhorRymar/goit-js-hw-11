@@ -1,11 +1,10 @@
 {
   "name": "goit-js-hw-11",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "",
-  "main": "index.js",
   "homepage": "https://ihorrymar.github.io/goit-js-hw-11/",
   "scripts": {
-    "dev": "parcel src/*.html",
+    "start": "parcel src/*.html",
     "build": "parcel build src/*.html --public-url /goit-js-hw-11/"
   },
   "repository": {
@@ -18,17 +17,19 @@
   "bugs": {
     "url": "https://github.com/goitacademy/parcel-project-template/issues"
   },
-  "devDependencies": {
-    "parcel-bundler": "^1.12.5",
-    "parcel-plugin-handlebars-precompile": "^1.0.2",
-    "parcel-plugin-nuke-dist": "^1.0.1",
-    "posthtml-include": "^1.6.2",
-    "sass": "^1.32.8"
-  },
   "dependencies": {
     "axios": "^0.27.2",
-    "basiclightbox": "^5.0.4",
+    "modern-normalize": "^1.1.0",
     "notiflix": "^3.2.5",
     "simplelightbox": "^2.10.3"
-  }
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.6.0",
+    "buffer": "^6.0.3",
+    "parcel": "^2.6.0",
+    "parcel-reporter-clean-dist": "^1.0.4",
+    "posthtml-include": "^1.7.4",
+    "process": "^0.11.10"
+  },
+  "browserslist": "> 0.5%, last 2 versions, not dead"
 }
