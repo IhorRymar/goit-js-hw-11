@@ -1,0 +1,2 @@
+.gallery{display:flex;flex-wrap:wrap}.photo-card{flex-basis:calc(25% - 30px);margin:15px;box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.14),0 2px 1px rgba(0,0,0,.2)}.image{object-fit:cover}.info,.info-item{display:flex}.info-item{margin-left:5px;flex-direction:column;text-align:center}
+/*# sourceMappingURL=/goit-js-hw-11/styles.8709051d.css.map */
