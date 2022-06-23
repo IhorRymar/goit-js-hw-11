@@ -14,56 +14,84 @@ const refs = {
 const PX_KEY = '28192905-9c9bb1b5a8af58fc3dabc837e';
 let findImgs = '';
 let numPage = 1;
+let perPage = 40;
+
+refs.btnLoad.style.visibility = 'hidden';
 
 async function fetchImages(key, find) {
-  return fetch(
-    `https://pixabay.com/api/?key=${key}&q=${find}&image_type=photo&orientation=horizontal&safesearch=true&page=${numPage}&per_page=10`
-  ).then(response => {
-    return response.json();
-  });
+  try {
+    const results = await axios.get(
+      `https://pixabay.com/api/?key=${key}&q=${find}&image_type=photo&orientation=horizontal&safesearch=true&page=${numPage}&per_page=${perPage}`
+    );
+    const response = await results.data;
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function incrementPage() {
   numPage += 1;
-  return numPage;
+  // return numPage;
 }
 
-function removeMarkup() {
-  refs.gallery.innerHTML = '';
+function resetPage() {
+  numPage = 1;
+  // return numPage;
 }
 
-refs.form.addEventListener('submit', submitForm);
+refs.form.addEventListener('submit', searchForm);
 refs.btnLoad.addEventListener('click', loadMore);
 refs.gallery.addEventListener('click', showModal);
 
-function submitForm(evt) {
+async function searchForm(evt) {
   evt.preventDefault();
-  removeMarkup();
+
+  clearMarkup();
   const findEl = refs.input.value;
   findImgs = findEl;
-  // console.log(findEl);
+  resetPage();
+  refs.btnLoad.style.visibility = 'hidden';
 
-  fetchImages(PX_KEY, findImgs)
-    .then(response => {
-      renderGallery(response.hits);
-      // console.log(response);
-      if (response.hits.length === 0) {
-        Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      }
-      if (findImgs === '') {
-        removeMarkup();
-      }
-    })
-    .catch(error => console.log(error));
+  const response = await fetchImages(PX_KEY, findImgs);
+  try {
+    renderGallery(response.hits);
+    console.log(response);
+
+    if (findImgs === '') {
+      Notify.failure('Field cannot be empty.');
+      refs.btnLoad.style.visibility = 'hidden';
+    }
+    if (response.hits.length === 0) {
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      refs.btnLoad.style.visibility = 'hidden';
+    }
+    if (findImgs !== '' && response.hits.length !== 0) {
+      Notify.success(`Hooray! We found ${response.totalHits} images.`);
+      refs.btnLoad.style.visibility = 'visible';
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-function loadMore() {
-  console.log(incrementPage());
-  fetchImages(PX_KEY, findImgs).then(response => {
+async function loadMore() {
+  incrementPage();
+  const response = await fetchImages(PX_KEY, findImgs);
+  try {
     renderGallery(response.hits);
-  });
+    if (response.hits < perPage) {
+      Notify.warning(
+        "We're sorry, but you've reached the end of search results."
+      );
+      refs.btnLoad.style.visibility = 'hidden';
+      smoothScroll();
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function renderGallery(items) {
@@ -103,6 +131,10 @@ function renderGallery(items) {
   refs.gallery.insertAdjacentHTML('beforeend', markup);
 }
 
+function clearMarkup() {
+  refs.gallery.innerHTML = '';
+}
+
 function showModal(evt) {
   evt.preventDefault();
 
@@ -110,4 +142,15 @@ function showModal(evt) {
     captionsData: 'alt',
     captionDelay: 250,
   }).refresh();
+}
+
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
